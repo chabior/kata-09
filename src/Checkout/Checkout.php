@@ -23,7 +23,7 @@ class Checkout
         $this->items = new CheckoutItems();
     }
 
-    public function scan($item): Checkout
+    public function scan(Item $item): Checkout
     {
         $items = $this->items->add($item);
 

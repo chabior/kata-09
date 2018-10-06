@@ -53,7 +53,7 @@ class CheckoutItems
         return $this->createNew(array_filter($this->items, $callback));
     }
 
-    private function forItem(Item $item):callable 
+    private function forItem(Item $item): callable
     {
         return function (CheckoutItem $checkoutItem) use($item) {
             return $checkoutItem->isFor($item);
