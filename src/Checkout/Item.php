@@ -20,11 +20,6 @@ class Item
         return $this->name === $item->name;
     }
 
-    public function toString():string
-    {
-        return (string)$this;
-    }
-
     public function __toString()
     {
         return $this->name;

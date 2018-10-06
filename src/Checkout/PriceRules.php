@@ -2,28 +2,38 @@
 
 namespace Kata\Checkout;
 
+use Kata\Checkout\Exception\NoPriceRuleForItemException;
+use Kata\Checkout\Exception\NotUniquePriceRulesException;
+use Kata\Checkout\Exception\QuantityLowerThanOneException;
+
 class PriceRules
 {
     /**
      * @var PriceRule[]
      */
-    protected $rules = [];
+    private $rules = [];
 
-    /**
-     * PriceRules constructor.
-     * @param array $rules
-     */
     public function __construct(array $rules)
     {
         $this->rules = $rules;
+
+        $this->each(function (PriceRule $priceRule) {
+            if ($this->hasMoreThan($priceRule, 1)) {
+                throw NotUniquePriceRulesException::create();
+            }
+        });
     }
 
     public function getPrice(Item $item, int $quantity): int
     {
+        if ($quantity < 0) {
+            throw QuantityLowerThanOneException::create();
+        }
+
         $rules = $this->find($this->forItem($item));
 
         if ($rules->isEmpty()) {
-            throw new \RuntimeException('There is no price for item ' . $item->toString());
+            throw NoPriceRuleForItemException::create($item);
         }
 
         return $rules->first()->getPrice($quantity);
@@ -34,20 +44,44 @@ class PriceRules
         return count($this->rules) === 0;
     }
 
-    protected function first(): ?PriceRule
+    public function each(callable $callback): void
+    {
+        array_map($callback, $this->rules);
+    }
+
+    public function hasMoreThan(PriceRule $priceRule, $expectedQuantity): bool
+    {
+        return $this->find($this->forPriceRule($priceRule))->count() > $expectedQuantity;
+    }
+
+    public function count(): int
+    {
+        return count($this->rules);
+    }
+
+    private function first(): ?PriceRule
     {
         return $this->rules[0];
     }
 
-    protected function forItem(Item $item):\Closure
+    private function forItem(Item $item):\Closure
     {
-        return function (PriceRule $ruleItem) use($item) {
+        return function (PriceRule $ruleItem) use ($item) {
             return $ruleItem->isFor($item);
         };
     }
 
-    protected function find(\Closure $callback): PriceRules
+    private function forPriceRule(PriceRule $basePriceRule):\Closure
     {
-        return new PriceRules(array_values(array_filter($this->rules, $callback)));
+        return function (PriceRule $priceRule) use($basePriceRule) {
+            return $basePriceRule->equals($priceRule);
+        };
+    }
+
+    private function find(\Closure $callback): PriceRules
+    {
+        $priceRules = clone $this;
+        $priceRules->rules = array_values(array_filter($this->rules, $callback));
+        return $priceRules;
     }
 }

@@ -3,41 +3,30 @@
 namespace Kata\Checkout;
 
 
+use Kata\Checkout\Exception\PriceLowerThanOneException;
+use Kata\Checkout\Exception\QuantityLowerThanOneException;
+
 class PriceRule
 {
     /**
      * @var Item
      */
-    protected $item;
+    private $item;
 
     /**
      * @var int
      */
-    protected $unitPrice;
+    private $unitPrice;
 
-    /**
-     * @var int
-     */
-    protected $specialPrice;
 
-    /**
-     * @var int
-     */
-    protected $specialQuantity;
-
-    /**
-     * PriceRule constructor.
-     * @param Item $item
-     * @param int $unitPrice
-     * @param int $specialPrice
-     * @param int $specialQuantity
-     */
-    public function __construct(Item $item, int $unitPrice, int $specialPrice = null, int $specialQuantity = null)
+    public function __construct(Item $item, int $unitPrice)
     {
+        if ($unitPrice < 1) {
+            throw PriceLowerThanOneException::create();
+        }
+
         $this->item = $item;
         $this->unitPrice = $unitPrice;
-        $this->specialPrice = $specialPrice;
-        $this->specialQuantity = $specialQuantity;
     }
 
     public function isFor(Item $item): bool
@@ -45,29 +34,17 @@ class PriceRule
         return $this->item->equals($item);
     }
 
+    public function equals(PriceRule $priceRule): bool
+    {
+        return $this->item->equals($priceRule->item);
+    }
+
     public function getPrice(int $quantity): int
     {
         if ($quantity < 1) {
-            throw new \RuntimeException("Quantity cant be lower than 1");
+            throw QuantityLowerThanOneException::create();
         }
 
-        if (empty($this->specialPrice)) {
-            return $this->unitPrice * $quantity;
-        }
-
-        if ($quantity === $this->specialQuantity) {
-            return $this->specialPrice;
-        }
-
-        if ($quantity < $this->specialQuantity) {
-            return $quantity * $this->unitPrice;
-        }
-
-        if ($quantity % $this->specialQuantity === 0) {
-            return ($quantity / $this->specialQuantity) * $this->specialPrice;
-        }
-
-        return (floor($quantity / $this->specialQuantity)) * $this->specialPrice + (($quantity % $this->specialQuantity) * $this->unitPrice);
+        return $this->unitPrice * $quantity;
     }
-
 }

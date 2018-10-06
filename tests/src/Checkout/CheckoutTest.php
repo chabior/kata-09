@@ -6,6 +6,7 @@ use Kata\Checkout\Checkout;
 use Kata\Checkout\Item;
 use Kata\Checkout\PriceRule;
 use Kata\Checkout\PriceRules;
+use Kata\Checkout\SpecialPriceRule;
 use PHPUnit\Framework\TestCase;
 
 class CheckoutTest extends TestCase
@@ -66,8 +67,8 @@ class CheckoutTest extends TestCase
     protected function createCheckout():Checkout
     {
         $rules = new PriceRules([
-            new PriceRule(new Item('A'), 50, 130, 3),
-            new PriceRule(new Item('B'), 30, 45, 2),
+            new SpecialPriceRule(new Item('A'), 50, 130, 3),
+            new SpecialPriceRule(new Item('B'), 30, 45, 2),
             new PriceRule(new Item('C'), 20),
             new PriceRule(new Item('D'), 15)
         ]);

@@ -15,18 +15,12 @@ class Checkout
     private $items;
 
     /**
-     * @var int
-     */
-    private $totalPrice;
-
-    /**
      * @param PriceRules $priceRules
      */
     public function __construct(PriceRules $priceRules)
     {
         $this->priceRules = $priceRules;
         $this->items = new CheckoutItems();
-        $this->totalPrice = 0;
     }
 
     public function scan($item): Checkout

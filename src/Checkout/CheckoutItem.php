@@ -3,6 +3,8 @@
 namespace Kata\Checkout;
 
 
+use Kata\Checkout\Exception\QuantityLowerThanOneException;
+
 class CheckoutItem
 {
     /**
@@ -15,13 +17,12 @@ class CheckoutItem
      */
     private $quantity;
 
-    /**
-     * CheckoutItem constructor.
-     * @param Item $item
-     * @param int $quantity
-     */
-    public function __construct(Item $item, $quantity)
+    public function __construct(Item $item, int $quantity)
     {
+        if ($quantity < 1) {
+            throw QuantityLowerThanOneException::create();
+        }
+
         $this->item = $item;
         $this->quantity = $quantity;
     }
@@ -46,7 +47,7 @@ class CheckoutItem
         return $priceRules->getPrice($this->item, $this->quantity);
     }
 
-    public function equals(CheckoutItem $checkoutItem)
+    public function equals(CheckoutItem $checkoutItem): bool
     {
         return $this->item->equals($checkoutItem->item);
     }

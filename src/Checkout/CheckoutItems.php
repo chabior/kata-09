@@ -8,22 +8,17 @@ class CheckoutItems
     /**
      * @var CheckoutItem[]
      */
-    protected $items;
-
-    public function __construct(array $items = [])
-    {
-        $this->items = $items;
-    }
+    private $items = [];
 
     public function add(Item $item): CheckoutItems
     {
-        $checkoutItems = $this->find($this->forItem($item));
+        $sameItemsInCheckout = $this->find($this->forItem($item));
         $items = $this->items;
 
-        if ($checkoutItems->isEmpty()) {
+        if ($sameItemsInCheckout->isEmpty()) {
             $items[] = CheckoutItem::create($item);
         } else {
-            $item = $checkoutItems->first()->increaseQuantity();
+            $item = $sameItemsInCheckout->first()->increaseQuantity();
             foreach ($items as $key => $checkoutItem) {
                 if ($item->equals($checkoutItem)) {
                     unset($items[$key]);
@@ -32,7 +27,7 @@ class CheckoutItems
             }
         }
 
-        return new self(array_values($items));
+        return $this->createNew($items);
     }
 
     public function total(PriceRules $priceRules): int
@@ -42,32 +37,32 @@ class CheckoutItems
         }, 0);
     }
 
-    protected function isEmpty(): bool
+    private function isEmpty(): bool
     {
         return count($this->items) === 0;
     }
 
-    protected function first(): ?CheckoutItem
+    private function first(): ?CheckoutItem
     {
         return current($this->items);
     }
 
-    protected function forItem(Item $item):\Closure
+    private function forItem(Item $item):callable 
     {
         return function (CheckoutItem $checkoutItem) use($item) {
             return $checkoutItem->isFor($item);
         };
     }
 
-    protected function forCheckoutItem(CheckoutItem $checkoutItem):\Closure
+    private function find(\Closure $callback): CheckoutItems
     {
-        return function (CheckoutItem $item) use ($checkoutItem) {
-            return $item->equals($checkoutItem);
-        };
+        return $this->createNew(array_filter($this->items, $callback));
     }
-
-    protected function find(\Closure $callback): CheckoutItems
+    
+    private function createNew(array $items): CheckoutItems
     {
-        return new CheckoutItems(array_filter($this->items, $callback));
+        $newCheckoutItems = clone $this;
+        $newCheckoutItems->items = array_values($items);
+        return $newCheckoutItems;
     }
 }
