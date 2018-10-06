@@ -33,4 +33,18 @@ class PriceRulesTest extends TestCase
 
         $priceRules->getPrice(new Item('C'), 1);
     }
+
+    public function testGetPrice(): void
+    {
+        $priceRules = new PriceRules([
+            new PriceRule(new Item('A'), 2),
+            new PriceRule(new Item('B'), 4),
+            new SpecialPriceRule(new Item('C'), 10, 5, 2)
+        ]);
+
+        self::assertEquals(16, $priceRules->getPrice(new Item('B'), 4));
+        self::assertEquals(8, $priceRules->getPrice(new Item('A'), 4));
+        self::assertEquals(10, $priceRules->getPrice(new Item('C'), 1));
+        self::assertEquals(5, $priceRules->getPrice(new Item('C'), 2));
+    }
 }
