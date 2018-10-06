@@ -40,10 +40,10 @@ class CheckoutItemTest extends TestCase
         $checkoutItem = new CheckoutItem(new Item('A'), 1);
         $checkoutItem = $checkoutItem->increaseQuantity();
 
-        self::assertEquals(2, $checkoutItem->quantity());
+        self::assertTrue($checkoutItem->hasQuantity(2));
 
         $checkoutItem = $checkoutItem->increaseQuantity();
-        self::assertEquals(3, $checkoutItem->quantity());
+        self::assertTrue($checkoutItem->hasQuantity(3));
     }
 
     public function testEquals(): void

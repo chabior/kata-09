@@ -52,8 +52,8 @@ class CheckoutItem
         return $this->item->equals($checkoutItem->item);
     }
 
-    public function quantity(): int
+    public function hasQuantity(int $quantity): bool
     {
-        return $this->quantity;
+        return $this->quantity === $quantity;
     }
 }
