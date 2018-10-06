@@ -37,14 +37,20 @@ class CheckoutItems
         }, 0);
     }
 
-    private function isEmpty(): bool
+    public function isEmpty(): bool
     {
         return count($this->items) === 0;
     }
 
-    private function first(): ?CheckoutItem
+    public function first(): ?CheckoutItem
     {
-        return current($this->items);
+        $item = current($this->items);
+        return $item ?: null;
+    }
+
+    public function find(\Closure $callback): CheckoutItems
+    {
+        return $this->createNew(array_filter($this->items, $callback));
     }
 
     private function forItem(Item $item):callable 
@@ -52,11 +58,6 @@ class CheckoutItems
         return function (CheckoutItem $checkoutItem) use($item) {
             return $checkoutItem->isFor($item);
         };
-    }
-
-    private function find(\Closure $callback): CheckoutItems
-    {
-        return $this->createNew(array_filter($this->items, $callback));
     }
     
     private function createNew(array $items): CheckoutItems
