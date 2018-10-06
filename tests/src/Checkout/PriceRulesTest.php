@@ -46,5 +46,7 @@ class PriceRulesTest extends TestCase
         self::assertEquals(8, $priceRules->getPrice(new Item('A'), 4));
         self::assertEquals(10, $priceRules->getPrice(new Item('C'), 1));
         self::assertEquals(5, $priceRules->getPrice(new Item('C'), 2));
+        self::assertEquals(15, $priceRules->getPrice(new Item('C'), 3));
+        self::assertEquals(10, $priceRules->getPrice(new Item('C'), 4));
     }
 }
