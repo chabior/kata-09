@@ -17,11 +17,13 @@ class PriceRules
     {
         $this->rules = $rules;
 
-        $this->each(function (PriceRule $priceRule) {
-            if ($this->hasMoreThan($priceRule, 1)) {
-                throw NotUniquePriceRulesException::create();
+        $this->each(
+            function (PriceRule $priceRule) {
+                if ($this->hasMoreThan($priceRule, 1)) {
+                    throw NotUniquePriceRulesException::create();
+                }
             }
-        });
+        );
     }
 
     public function getPrice(Item $item, int $quantity): int
@@ -73,7 +75,7 @@ class PriceRules
 
     private function forPriceRule(PriceRule $basePriceRule):\Closure
     {
-        return function (PriceRule $priceRule) use($basePriceRule) {
+        return function (PriceRule $priceRule) use ($basePriceRule) {
             return $basePriceRule->equals($priceRule);
         };
     }

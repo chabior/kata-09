@@ -32,9 +32,11 @@ class CheckoutItems
 
     public function total(PriceRules $priceRules): int
     {
-        return array_reduce($this->items, function (int $total, CheckoutItem $checkoutItem) use($priceRules) {
-            return $total + $checkoutItem->getPrice($priceRules);
-        }, 0);
+        return array_reduce(
+            $this->items, function (int $total, CheckoutItem $checkoutItem) use ($priceRules) {
+                return $total + $checkoutItem->getPrice($priceRules);
+            }, 0
+        );
     }
 
     public function isEmpty(): bool
@@ -55,7 +57,7 @@ class CheckoutItems
 
     private function forItem(Item $item): callable
     {
-        return function (CheckoutItem $checkoutItem) use($item) {
+        return function (CheckoutItem $checkoutItem) use ($item) {
             return $checkoutItem->isFor($item);
         };
     }
