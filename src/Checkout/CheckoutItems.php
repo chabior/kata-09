@@ -12,19 +12,19 @@ class CheckoutItems
 
     public function add(Item $item): CheckoutItems
     {
-        $sameItemsInCheckout = $this->find($this->forItem($item));
+        $checkoutItem = $this->find($this->forItem($item))->first();
         $items = $this->items;
 
-        if ($sameItemsInCheckout->isEmpty()) {
-            $items[] = CheckoutItem::create($item);
-        } else {
-            $item = $sameItemsInCheckout->first()->increaseQuantity();
+        if ($checkoutItem) {
+            $item = $checkoutItem->increaseQuantity();
             foreach ($items as $key => $checkoutItem) {
                 if ($item->equals($checkoutItem)) {
                     unset($items[$key]);
                     $items[] = $item;
                 }
             }
+        } else {
+            $items[] = CheckoutItem::create($item);
         }
 
         return $this->createNew($items);
@@ -48,7 +48,7 @@ class CheckoutItems
         return $item ?: null;
     }
 
-    public function find(\Closure $callback): CheckoutItems
+    public function find(callable $callback): CheckoutItems
     {
         return $this->createNew(array_filter($this->items, $callback));
     }

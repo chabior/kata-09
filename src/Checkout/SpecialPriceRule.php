@@ -44,6 +44,6 @@ class SpecialPriceRule extends PriceRule
             $unitPrice = parent::getPrice($quantity % $this->specialQuantity);
         }
 
-        return (floor($quantity / $this->specialQuantity)) * $this->specialPrice + $unitPrice;
+        return (int) (floor($quantity / $this->specialQuantity)) * $this->specialPrice + $unitPrice;
     }
 }

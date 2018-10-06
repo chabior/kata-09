@@ -30,13 +30,12 @@ class PriceRules
             throw QuantityLowerThanOneException::create();
         }
 
-        $rules = $this->find($this->forItem($item));
-
-        if ($rules->isEmpty()) {
+        $priceRule = $this->find($this->forItem($item))->first();
+        if (!$priceRule) {
             throw NoPriceRuleForItemException::create($item);
         }
 
-        return $rules->first()->getPrice($quantity);
+        return $priceRule->getPrice($quantity);
     }
 
     public function isEmpty(): bool
@@ -61,7 +60,8 @@ class PriceRules
 
     private function first(): ?PriceRule
     {
-        return $this->rules[0];
+        $priceRule = current($this->rules);
+        return $priceRule ?: null;
     }
 
     private function forItem(Item $item):\Closure
