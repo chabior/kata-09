@@ -20,7 +20,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Kata\\Checkout\\Tests\\": "tests/"
+      "Kata\\Checkout\\Tests\\": "tests/Checkout"
     }
   }
 }
