@@ -49,14 +49,14 @@ class PriceRules
         array_map($callback, $this->rules);
     }
 
-    public function hasMoreThan(PriceRule $priceRule, $expectedQuantity): bool
-    {
-        return $this->find($this->forPriceRule($priceRule))->count() > $expectedQuantity;
-    }
-
     public function count(): int
     {
         return count($this->rules);
+    }
+
+    private function hasMoreThan(PriceRule $priceRule, $expectedQuantity): bool
+    {
+        return $this->find($this->forPriceRule($priceRule))->count() > $expectedQuantity;
     }
 
     private function first(): ?PriceRule
