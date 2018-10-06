@@ -15,12 +15,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Kata\\Checkout": "src/"
+      "Kata\\Checkout\\": "src/Checkout/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Kata\\Tests\\": "tests/src/"
+      "Kata\\Checkout\\Tests\\": "tests/"
     }
   }
 }
