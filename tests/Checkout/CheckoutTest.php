@@ -66,12 +66,12 @@ class CheckoutTest extends TestCase
 
     protected function createCheckout():Checkout
     {
-        $rules = new PriceRules([
-            new SpecialPriceRule(new Item('A'), 50, 130, 3),
-            new SpecialPriceRule(new Item('B'), 30, 45, 2),
-            new PriceRule(new Item('C'), 20),
-            new PriceRule(new Item('D'), 15)
-        ]);
+        $rules = (new PriceRules())
+            ->addPriceRule(new SpecialPriceRule(new Item('A'), 50, 130, 3))
+            ->addPriceRule(new SpecialPriceRule(new Item('B'), 30, 45, 2))
+            ->addPriceRule(new PriceRule(new Item('C'), 20))
+            ->addPriceRule(new PriceRule(new Item('D'), 15))
+        ;
         $checkout = new Checkout($rules);
 
         return $checkout;

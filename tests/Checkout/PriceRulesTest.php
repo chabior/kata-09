@@ -13,34 +13,46 @@ use PHPUnit\Framework\TestCase;
 
 class PriceRulesTest extends TestCase
 {
-    public function testUniquenessOfPriceRules(): void
+    public function testAddDuplicatedPriceRules(): void
     {
         $this->expectException(NotUniquePriceRulesException::class);
 
-        new PriceRules([
-            new PriceRule(new Item('A'), 10),
-            new SpecialPriceRule(new Item('A'), 10, 3, 20)
-        ]);
+        (new PriceRules())
+            ->addPriceRule(new PriceRule(new Item('A'), 10))
+            ->addPriceRule(new SpecialPriceRule(new Item('A'), 10, 3, 20))
+        ;
+    }
+
+    public function testAddPriceRules(): void
+    {
+        $priceRules = (new PriceRules())
+            ->addPriceRule(new PriceRule(new Item('A'), 10))
+        ;
+
+        self::assertEquals(1, $priceRules->count());
+
+        $priceRules = $priceRules->addPriceRule(new PriceRule(new Item('B'), 15));
+        self::assertEquals(2, $priceRules->count());
     }
 
     public function testGetPriceForMissingItem(): void
     {
         $this->expectException(NoPriceRuleForItemException::class);
 
-        $priceRules = new PriceRules([
-            new PriceRule(new Item('A'), 2)
-        ]);
+        $priceRules = (new PriceRules())
+            ->addPriceRule(new PriceRule(new Item('A'), 2))
+        ;
 
         $priceRules->getPrice(new Item('C'), 1);
     }
 
     public function testGetPrice(): void
     {
-        $priceRules = new PriceRules([
-            new PriceRule(new Item('A'), 2),
-            new PriceRule(new Item('B'), 4),
-            new SpecialPriceRule(new Item('C'), 10, 5, 2)
-        ]);
+        $priceRules = (new PriceRules())
+            ->addPriceRule(new PriceRule(new Item('A'), 2))
+            ->addPriceRule(new PriceRule(new Item('B'), 4))
+            ->addPriceRule(new SpecialPriceRule(new Item('C'), 10, 5, 2))
+        ;
 
         self::assertEquals(16, $priceRules->getPrice(new Item('B'), 4));
         self::assertEquals(8, $priceRules->getPrice(new Item('A'), 4));

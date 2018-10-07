@@ -6,7 +6,7 @@ namespace Kata\Checkout;
 use Kata\Checkout\Exception\PriceLowerThanOneException;
 use Kata\Checkout\Exception\QuantityLowerThanOneException;
 
-class PriceRule
+class PriceRule implements PriceRuleInterface
 {
     /**
      * @var Item
